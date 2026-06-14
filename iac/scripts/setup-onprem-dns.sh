@@ -24,22 +24,22 @@ EOF
 mkdir -p /etc/bind/zones
 
 cat > /etc/bind/named.conf.local << EOF
-zone "onprem.local" {
+zone "onprem.iac-labs" {
     type master;
-    file "/etc/bind/zones/db.onprem.local";
+    file "/etc/bind/zones/db.onprem.iac-labs";
 };
 EOF
 
-cat > /etc/bind/zones/db.onprem.local << EOF
+cat > /etc/bind/zones/db.onprem.iac-labs << EOF
 \$TTL 300
-@ IN SOA ns1.onprem.local. admin.onprem.local. (
+@ IN SOA ns1.onprem.iac-labs. admin.onprem.iac-labs. (
     1       ; Serial
     300     ; Refresh
     300     ; Retry
     1200    ; Expire
     300     ; Minimum TTL
 )
-@ IN NS ns1.onprem.local.
+@ IN NS ns1.onprem.iac-labs.
 ns1 IN A ${MYIP}
 app IN A ${MYIP}
 db  IN A 10.0.0.10
