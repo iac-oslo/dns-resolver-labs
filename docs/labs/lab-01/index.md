@@ -3,7 +3,7 @@
 This lab provisions the infrastructure for labs 02 and 03. It deploys a single VNet with Azure Private DNS Resolver, a workload VM, an on-premises simulation VM with BIND9, a Storage Account with a Private Endpoint, and Azure Bastion for connectivity.
 
 !!! info "Estimated deployment time"
-    ~15–20 minutes
+    ~8–10 minutes
 
 !!! tip "Cost"
     Running Set 1 resources for 3 hours costs approximately **$1.88**. The most expensive resource is the DNS Resolver (~$0.40/hr for both endpoints). Delete the resource group when done with labs 02–03 to avoid unnecessary charges.
