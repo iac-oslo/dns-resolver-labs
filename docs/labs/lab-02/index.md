@@ -26,6 +26,12 @@ vm-workload ──DNS query──► Resolver inbound (10.10.2.4)
 
 ## Task #1 - Verify DNS resolves to a public IP (before state)
 
+Get your Storage Account name (run from your workstation):
+
+```powershell
+az storage account list -g rg-norwayeast-pdnsr-labs-s1 --query '[0].name' -o tsv
+```
+
 Connect to `vm-workload-norwayeast` via Azure Bastion:
 
 1. Navigate to `vm-workload-norwayeast` in Azure Portal
@@ -96,12 +102,6 @@ Connect to `vm-workload-norwayeast` via Azure Bastion:
 1. Navigate to `vm-workload-norwayeast` in Azure Portal
 2. Click **Connect** → **Bastion**
 3. Login: `iac-admin` / `fooBar123!`
-
-Get your Storage Account name first (run from your workstation):
-
-```powershell
-az storage account list -g rg-norwayeast-pdnsr-labs-s1 --query '[0].name' -o tsv
-```
 
 From the VM, resolve the Storage Account FQDN:
 
