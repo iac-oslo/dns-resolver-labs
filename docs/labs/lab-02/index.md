@@ -29,9 +29,9 @@ vm-workload ──DNS query──► Resolver inbound (10.10.0.4)
 Update `vnet-single-norwayeast` to use the DNS Resolver inbound endpoint as its DNS server:
 
 ```powershell
-az network vnet update \
-  --name vnet-single-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s1 \
+az network vnet update `
+  --name vnet-single-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s1 `
   --dns-servers 10.10.0.4
 ```
 
@@ -41,10 +41,10 @@ az network vnet update \
 Verify the DNS setting was applied:
 
 ```powershell
-az network vnet show \
-  --name vnet-single-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s1 \
-  --query 'dhcpOptions.dnsServers' \
+az network vnet show `
+  --name vnet-single-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s1 `
+  --query 'dhcpOptions.dnsServers' `
   -o tsv
 ```
 
@@ -53,8 +53,8 @@ az network vnet show \
 The VM NIC picks up VNet DNS settings on next boot or NIC refresh:
 
 ```powershell
-az vm restart \
-  --name vm-workload-norwayeast \
+az vm restart `
+  --name vm-workload-norwayeast `
   --resource-group rg-norwayeast-pdnsr-labs-s1
 ```
 
@@ -104,10 +104,10 @@ Expected: `10.10.0.4`
 ## Task #5 - Verify the Private DNS Zone is linked to the VNet
 
 ```powershell
-az network private-dns link vnet list \
-  --resource-group rg-norwayeast-pdnsr-labs-s1 \
-  --zone-name privatelink.blob.core.windows.net \
-  --query '[].{name:name, vnet:virtualNetwork.id}' \
+az network private-dns link vnet list `
+  --resource-group rg-norwayeast-pdnsr-labs-s1 `
+  --zone-name privatelink.blob.core.windows.net `
+  --query '[].{name:name, vnet:virtualNetwork.id}' `
   -o table
 ```
 

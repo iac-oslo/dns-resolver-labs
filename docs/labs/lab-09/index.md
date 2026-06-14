@@ -28,9 +28,9 @@ vm-spoke ──dig app.onprem.local──► AzFW DNS Proxy (10.12.0.4)
 - Outbound endpoint resource ID:
 
 ```powershell
-az dns-resolver outbound-endpoint list \
-  --dns-resolver-name pdnsr-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
+az dns-resolver outbound-endpoint list `
+  --dns-resolver-name pdnsr-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --query '[0].id' -o tsv
 ```
 

@@ -73,10 +73,10 @@ The following resources will be deployed under `rg-norwayeast-pdnsr-labs-s2`:
 Get the DNS Resolver inbound endpoint IP:
 
 ```powershell
-az dns-resolver inbound-endpoint list \
-  --dns-resolver-name pdnsr-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s2 \
-  --query '[0].ipConfigurations[0].privateIpAddress' \
+az dns-resolver inbound-endpoint list `
+  --dns-resolver-name pdnsr-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --query '[0].ipConfigurations[0].privateIpAddress' `
   -o tsv
 ```
 

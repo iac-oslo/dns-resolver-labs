@@ -81,10 +81,10 @@ vm-spoke ──DNS query──► Azure Firewall (DNS Proxy, 10.12.0.4)
 Get the Azure Firewall private IP:
 
 ```powershell
-az network firewall show \
-  --name naf-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
-  --query ipConfigurations[0].privateIPAddress \
+az network firewall show `
+  --name naf-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
+  --query ipConfigurations[0].privateIPAddress `
   -o tsv
 ```
 
@@ -93,10 +93,10 @@ Expected: `10.12.0.4`
 Get the DNS Resolver inbound endpoint IP:
 
 ```powershell
-az dns-resolver inbound-endpoint list \
-  --dns-resolver-name pdnsr-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
-  --query '[0].ipConfigurations[0].privateIpAddress' \
+az dns-resolver inbound-endpoint list `
+  --dns-resolver-name pdnsr-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
+  --query '[0].ipConfigurations[0].privateIpAddress' `
   -o tsv
 ```
 
@@ -105,10 +105,10 @@ Expected: `10.12.0.196`
 Confirm the AzFW Firewall Policy is configured with DNS proxy pointing to the resolver:
 
 ```powershell
-az network firewall policy show \
-  --name nfp-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
-  --query 'dnsSettings' \
+az network firewall policy show `
+  --name nfp-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
+  --query 'dnsSettings' `
   -o json
 ```
 
