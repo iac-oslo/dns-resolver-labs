@@ -2,28 +2,66 @@ targetScope = 'resourceGroup'
 
 param parLocation string
 param parAddressRange string
+param parResolverAddressRange string
 param parOnpremAddressRange string
 
-var varVNetName = 'vnet-single-${parLocation}'
+var varWorkloadVNetName = 'vnet-workload-${parLocation}'
+var varResolverVNetName = 'vnet-resolver-${parLocation}'
 var varOnpremVNetName = 'vnet-onprem-${parLocation}'
 
-module modSingleVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
-  name: 'deploy-${varVNetName}'
+module modResolverVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
+  name: 'deploy-${varResolverVNetName}'
   params: {
-    name: varVNetName
+    name: varResolverVNetName
     location: parLocation
-    addressPrefixes: [parAddressRange]
+    addressPrefixes: [parResolverAddressRange]
     subnets: [
       {
         name: 'subnet-inbound'
-        addressPrefixes: [cidrSubnet(parAddressRange, 28, 0)]
+        addressPrefixes: [cidrSubnet(parResolverAddressRange, 28, 0)]
         delegation: 'Microsoft.Network/dnsResolvers'
       }
       {
         name: 'subnet-outbound'
-        addressPrefixes: [cidrSubnet(parAddressRange, 28, 1)]
+        addressPrefixes: [cidrSubnet(parResolverAddressRange, 28, 1)]
         delegation: 'Microsoft.Network/dnsResolvers'
       }
+    ]
+    peerings: [
+      {
+        allowForwardedTraffic: true
+        allowGatewayTransit: false
+        allowVirtualNetworkAccess: true
+        remotePeeringAllowForwardedTraffic: true
+        remotePeeringAllowVirtualNetworkAccess: true
+        remotePeeringEnabled: true
+        remotePeeringName: 'workload-to-resolver'
+        remoteVirtualNetworkResourceId: modWorkloadVNet.outputs.resourceId
+        useRemoteGateways: false
+      }
+      {
+        allowForwardedTraffic: true
+        allowGatewayTransit: false
+        allowVirtualNetworkAccess: true
+        remotePeeringAllowForwardedTraffic: true
+        remotePeeringAllowVirtualNetworkAccess: true
+        remotePeeringEnabled: true
+        remotePeeringName: 'onprem-to-resolver'
+        remoteVirtualNetworkResourceId: modOnpremVNet.outputs.resourceId
+        useRemoteGateways: false
+      }
+    ]
+    enableTelemetry: false
+  }
+}
+
+module modWorkloadVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
+  name: 'deploy-${varWorkloadVNetName}'
+  params: {
+    name: varWorkloadVNetName
+    location: parLocation
+    addressPrefixes: [parAddressRange]
+    subnets: [
       {
         name: 'AzureBastionSubnet'
         addressPrefixes: [cidrSubnet(parAddressRange, 26, 1)]
@@ -61,8 +99,8 @@ module modOnpremVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
         remotePeeringAllowForwardedTraffic: true
         remotePeeringAllowVirtualNetworkAccess: true
         remotePeeringEnabled: true
-        remotePeeringName: 'single-to-onprem'
-        remoteVirtualNetworkResourceId: modSingleVNet.outputs.resourceId
+        remotePeeringName: 'workload-to-onprem'
+        remoteVirtualNetworkResourceId: modWorkloadVNet.outputs.resourceId
         useRemoteGateways: false
       }
     ]
@@ -70,11 +108,12 @@ module modOnpremVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
   }
 }
 
-output singleVnetId string = modSingleVNet.outputs.resourceId
-output inboundSubnetId string = modSingleVNet.outputs.subnetResourceIds[0]
-output outboundSubnetId string = modSingleVNet.outputs.subnetResourceIds[1]
-output bastionSubnetId string = modSingleVNet.outputs.subnetResourceIds[2]
-output workloadSubnetId string = modSingleVNet.outputs.subnetResourceIds[3]
-output peSubnetId string = modSingleVNet.outputs.subnetResourceIds[4]
+output resolverVnetId string = modResolverVNet.outputs.resourceId
+output inboundSubnetId string = modResolverVNet.outputs.subnetResourceIds[0]
+output outboundSubnetId string = modResolverVNet.outputs.subnetResourceIds[1]
+output workloadVnetId string = modWorkloadVNet.outputs.resourceId
+output bastionSubnetId string = modWorkloadVNet.outputs.subnetResourceIds[0]
+output workloadSubnetId string = modWorkloadVNet.outputs.subnetResourceIds[1]
+output peSubnetId string = modWorkloadVNet.outputs.subnetResourceIds[2]
 output onpremVnetId string = modOnpremVNet.outputs.resourceId
 output onpremSubnetId string = modOnpremVNet.outputs.subnetResourceIds[0]
