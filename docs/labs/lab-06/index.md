@@ -1,38 +1,42 @@
-# lab-06 - Hub-Spoke: Resolve On-Prem DNS from Spokes
+# lab-06 - Hub-Spoke + Azure Firewall: Resolve On-Prem DNS via DNS Proxy
 
-In this lab you create a DNS Forwarding Ruleset (IaC task) and link it to both spoke VNets. Spoke VMs then resolve `onprem.local` records through the DNS Resolver, which forwards the queries to the on-prem BIND9 server.
+In this lab you create a DNS Forwarding Ruleset (IaC task) so that `onprem.local` queries from spoke VMs flow through the Azure Firewall DNS proxy, through the DNS Resolver outbound endpoint, and reach the on-prem BIND9 server.
 
-**Scenario:** Workloads in hub-spoke spokes need to resolve internal DNS records from the on-premises network. The forwarding ruleset in the resolver handles the routing.
+**Full resolution chain:**
 
 ```
-vm-spoke1 ──dig app.onprem.local──► Resolver inbound (10.11.0.68)
-                                             │
-                          Forwarding Ruleset: onprem.local → vm-onprem IP
-                                             │
-                              Resolver outbound endpoint
-                                             │
-                              vm-onprem-norwayeast BIND9 (10.11.3.4)
-                                             │
-                                    app.onprem.local resolved
+vm-spoke ──dig app.onprem.local──► AzFW DNS Proxy (10.12.0.4)
+                                           │
+                          Firewall policy DNS server: [10.12.0.196]
+                                           │
+                               Resolver inbound (10.12.0.196)
+                                           │
+                    Forwarding Ruleset: onprem.local → vm-onprem IP
+                                           │
+                         Resolver outbound endpoint (10.12.0.208/28)
+                                           │
+                         vm-onprem BIND9 (10.12.4.4, port 53)
+                                           │
+                              app.onprem.local = 10.12.4.4
 ```
 
 ## Prerequisites
 
-- Lab-05 completed
-- Spoke VNet DNS already set to `10.11.0.68`
-- On-prem VM IP noted (expected: `10.11.3.4`)
+- Lab-08 completed
+- Spoke VNets DNS set to Azure Firewall IP (`10.12.0.4`)
+- On-prem VM IP noted (expected: `10.12.4.4`)
 - Outbound endpoint resource ID:
 
 ```powershell
 az dns-resolver outbound-endpoint list `
   --dns-resolver-name pdnsr-norwayeast `
-  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --query '[0].id' -o tsv
 ```
 
 ## Task #1 - Write the DNS Forwarding Ruleset Bicep module
 
-Create `iac/set2-hub-spoke/modules/forwarding-ruleset.bicep`:
+Create `iac/set3-hub-spoke-azfw/modules/forwarding-ruleset.bicep`:
 
 ```bicep
 targetScope = 'resourceGroup'
@@ -82,32 +86,32 @@ Get required values:
 ```powershell
 $outboundEpId = az dns-resolver outbound-endpoint list `
   --dns-resolver-name pdnsr-norwayeast `
-  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --query '[0].id' -o tsv
 
 $spoke1VnetId = az network vnet show `
   --name vnet-spoke1-norwayeast `
-  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --query id -o tsv
 
 $spoke2VnetId = az network vnet show `
   --name vnet-spoke2-norwayeast `
-  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --query id -o tsv
 
 $onpremIP = az vm show -d `
   --name vm-onprem-norwayeast `
-  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --query privateIps -o tsv
 ```
 
 Deploy:
 
 ```powershell
-cd dns-resolver-labs/iac/set2-hub-spoke
+cd dns-resolver-labs/iac/set3-hub-spoke-azfw
 
 az deployment group create `
-  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --template-file modules/forwarding-ruleset.bicep `
   --parameters `
     parLocation=norwayeast `
@@ -131,7 +135,7 @@ Expected:
 
 ```
 ;; ANSWER SECTION:
-app.onprem.local.   300   IN   A   10.11.3.4
+app.onprem.local.   300   IN   A   10.12.4.4
 ```
 
 Resolve `db.onprem.local`:
@@ -147,23 +151,23 @@ Expected:
 db.onprem.local.   300   IN   A   10.0.0.10
 ```
 
-Repeat from `vm-spoke2-norwayeast` — should return the same results.
+Repeat from `vm-spoke2-norwayeast` — same results expected.
 
 !!! success "What you verified"
-    Both spoke VMs can resolve on-premises DNS records through a single DNS Resolver. The forwarding ruleset is linked to both spoke VNets. The on-prem BIND9 server answers queries forwarded through the resolver's outbound endpoint.
+    The complete DNS resolution chain with Azure Firewall as DNS proxy:
+    1. Spoke VM sends DNS query to Azure Firewall (10.12.0.4)
+    2. Firewall DNS proxy forwards to DNS Resolver inbound (10.12.0.196)
+    3. Resolver matches the `onprem.local.` forwarding rule
+    4. Resolver outbound endpoint sends query to on-prem BIND9 (10.12.4.4)
+    5. BIND9 returns the record
+    6. Answer flows back through resolver → firewall → VM
 
-## Task #4 - Verify Storage Account PE resolution still works
-
-Forwarding rules only apply to `onprem.local.` — everything else still resolves normally:
+## Task #4 - Verify Private Endpoint resolution still works
 
 ```bash
 dig <storage-account-name>.blob.core.windows.net
 ```
 
-Expected: private IP in the PE subnet.
+Expected: private IP in subnet-pe. Both PE resolution and on-prem DNS forwarding work simultaneously.
 
-!!! tip "Clean up Set 2 resources"
-    Before proceeding to lab-07, you can optionally delete Set 2 resources:
-    ```powershell
-    az group delete --name rg-norwayeast-pdnsr-labs-s2 --yes --no-wait
-    ```
+You are now ready for [lab-07](../lab-07/index.md).
