@@ -26,6 +26,8 @@ vm-workload ──DNS query──► Resolver inbound (10.10.2.4)
 
 ## Task #1 - Configure VNet DNS to use the Resolver inbound endpoint
 
+By default, VMs in a VNet use Azure's platform DNS (168.63.129.16) directly. That works fine for public names, but it bypasses the DNS Resolver entirely — private DNS zone lookups would go straight to Azure DNS without passing through the resolver inbound endpoint. Setting the VNet's DNS server to the resolver inbound IP forces all VM DNS queries through the resolver first, giving the resolver control over how names are resolved (including forwarding on-prem queries in lab-03).
+
 Update `vnet-workload-norwayeast` to use the DNS Resolver inbound endpoint as its DNS server:
 
 ```powershell
