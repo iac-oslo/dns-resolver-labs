@@ -5,7 +5,10 @@ param parLocation string
 import { getResourcePrefix, hubAddressRange, onpremAddressRange, adminUsername, adminPassword } from 'variables.bicep'
 
 var varResourcePrefix = getResourcePrefix(parLocation)
-var varResourceGroupName = 'rg-${varResourcePrefix}-s3'
+var varResourceGroupName = 'rg-${varResourcePrefix}-s2'
+var varSpoke1Cidr = '10.12.2.0/24'
+var varSpoke2Cidr = '10.12.3.0/24'
+var varSpokeCidrs = [varSpoke1Cidr, varSpoke2Cidr]
 
 module rg 'br/public:avm/res/resources/resource-group:0.4.1' = {
   name: 'deploy-${varResourceGroupName}'
@@ -45,6 +48,7 @@ module firewall 'modules/firewall.bicep' = {
     parLocation: parLocation
     parHubVnetId: hub.outputs.hubVnetId
     parResolverInboundIP: resolver.outputs.inboundEndpointIP
+    parSpokeCidrs: varSpokeCidrs
   }
 }
 
@@ -57,6 +61,8 @@ module spokes 'modules/spoke.bicep' = [for i in range(1, 2): {
     parLocation: parLocation
     parAddressRange: '10.12.${i + 1}.0/24'
     parHubVnetId: hub.outputs.hubVnetId
+    parFirewallIP: firewall.outputs.firewallPrivateIP
+    parRemoteSpokeCidrs: [i == 1 ? varSpoke2Cidr : varSpoke1Cidr]
     adminUsername: adminUsername
     adminPassword: adminPassword
   }

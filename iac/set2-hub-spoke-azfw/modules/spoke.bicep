@@ -4,11 +4,28 @@ param parLocation string
 param parIndex int
 param parAddressRange string
 param parHubVnetId string
+param parFirewallIP string
+param parRemoteSpokeCidrs string[]
 param adminUsername string
 @secure()
 param adminPassword string
 
 var varVNetName = 'vnet-spoke${parIndex}-${parLocation}'
+
+resource resRouteTable 'Microsoft.Network/routeTables@2024-01-01' = {
+  name: 'rt-spoke${parIndex}-${parLocation}'
+  location: parLocation
+  properties: {
+    routes: [for cidr in parRemoteSpokeCidrs: {
+      name: replace(cidr, '/', '-')
+      properties: {
+        addressPrefix: cidr
+        nextHopType: 'VirtualAppliance'
+        nextHopIpAddress: parFirewallIP
+      }
+    }]
+  }
+}
 
 module modSpokeVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
   name: 'deploy-${varVNetName}'
@@ -20,6 +37,7 @@ module modSpokeVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
       {
         name: 'subnet-workload'
         addressPrefixes: [parAddressRange]
+        routeTableResourceId: resRouteTable.id
       }
     ]
     peerings: [

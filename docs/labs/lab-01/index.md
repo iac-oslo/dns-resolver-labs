@@ -69,12 +69,12 @@ The following resources will be deployed under `rg-norwayeast-pdnsr-labs-s1`:
 
 ### On-prem DNS server
 
-`vm-onprem-norwayeast` is pre-configured with BIND9 and serves the `onprem.local` zone with these records:
+`vm-onprem-norwayeast` is pre-configured with BIND9 and serves the `onprem.iac-labs` zone with these records:
 
 | Record | IP |
 |--------|----|
-| `app.onprem.local` | vm-onprem private IP |
-| `db.onprem.local` | 10.0.0.10 (synthetic) |
+| `app.onprem.iac-labs` | vm-onprem private IP |
+| `db.onprem.iac-labs` | 10.0.0.10 (synthetic) |
 
 ## Task #3 - Verify deployment and note IP addresses
 

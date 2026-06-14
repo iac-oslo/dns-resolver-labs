@@ -1,6 +1,6 @@
 # lab-04 - Provision Set 2: Hub-Spoke with Azure Firewall
 
-This lab provisions the infrastructure for labs 05 and 06. It adds Azure Firewall (Basic SKU) to the hub network, configured as a DNS proxy that forwards queries to the Private DNS Resolver. Spoke VMs use the firewall as their DNS server.
+This lab provisions the infrastructure for labs 05 and 06. It deploys a hub-spoke network topology with Azure Firewall (Basic SKU) in the hub, configured as a DNS proxy that forwards queries to the Private DNS Resolver. Spoke VMs use the firewall as their DNS server.
 
 !!! info "Estimated deployment time"
     ~25–35 minutes. Azure Firewall Basic takes 12–18 minutes to provision.
@@ -13,7 +13,7 @@ This lab provisions the infrastructure for labs 05 and 06. It adds Azure Firewal
 ## Task #1 - Deploy lab environment
 
 ```powershell
-cd dns-resolver-labs/iac/set3-hub-spoke-azfw
+cd dns-resolver-labs/iac/set2-hub-spoke-azfw
 ./deploy.ps1
 ```
 
