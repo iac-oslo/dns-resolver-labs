@@ -1,12 +1,11 @@
 targetScope = 'subscription'
 
 param parLocation string
-param parRgIndex string = '1'
 
 import { getResourcePrefix, singleVnetAddressRange, onpremVnetAddressRange, adminUsername, adminPassword } from 'variables.bicep'
 
 var varResourcePrefix = getResourcePrefix(parLocation)
-var varResourceGroupName = 'rg-${varResourcePrefix}-s1-${parRgIndex}'
+var varResourceGroupName = 'rg-${varResourcePrefix}-s1'
 
 module rg 'br/public:avm/res/resources/resource-group:0.4.1' = {
   name: 'deploy-${varResourceGroupName}'
