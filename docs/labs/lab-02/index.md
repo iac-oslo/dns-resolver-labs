@@ -52,6 +52,8 @@ az network vnet show `
 
 ## Task #2 - Restart the workload VM to pick up the new DNS settings
 
+VNet DNS settings are delivered to VMs via DHCP. When Azure updates the VNet's DNS server list, running VMs are not notified — they keep using the DNS server from their last DHCP lease until the lease is renewed. A reboot forces the VM to release and re-request its DHCP lease, at which point Azure pushes the updated DNS server address down to the NIC. Without the reboot, `dig` queries from the VM would still go directly to Azure platform DNS (168.63.129.16) and bypass the resolver.
+
 The VM NIC picks up VNet DNS settings on next boot or NIC refresh:
 
 ```powershell
