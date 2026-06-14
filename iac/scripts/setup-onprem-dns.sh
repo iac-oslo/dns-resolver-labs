@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 
-apt-get update -y
+apt-get clean
+apt-get update -y || apt-get update -y
 apt-get install -y software-properties-common
 add-apt-repository -y universe
-apt-get update -y
+apt-get update -y || apt-get update -y
 apt-get install -y bind9 bind9utils dnsutils curl
 
 MYIP=$(hostname -I | awk '{print $1}')
