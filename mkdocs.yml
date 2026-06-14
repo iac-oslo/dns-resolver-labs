@@ -8,13 +8,10 @@ nav:
   - Lab 01 - Provision Set 1 (Single VNet): labs/lab-01/index.md
   - Lab 02 - Single VNet - Resolve Private Endpoint: labs/lab-02/index.md
   - Lab 03 - Single VNet - Resolve On-Prem DNS: labs/lab-03/index.md
-  - Lab 04 - Provision Set 2 (Hub-Spoke): labs/lab-04/index.md
-  - Lab 05 - Hub-Spoke - Resolve Private Endpoint from Spokes: labs/lab-05/index.md
-  - Lab 06 - Hub-Spoke - Resolve On-Prem DNS from Spokes: labs/lab-06/index.md
-  - Lab 07 - Provision Set 3 (Hub-Spoke + Azure Firewall): labs/lab-07/index.md
-  - Lab 08 - Hub-Spoke + AzFW - Resolve Private Endpoint via DNS Proxy: labs/lab-08/index.md
-  - Lab 09 - Hub-Spoke + AzFW - Resolve On-Prem DNS via DNS Proxy: labs/lab-09/index.md
-  - Lab 10 - Cleaning up resources: labs/lab-10/index.md
+  - Lab 04 - Provision Set 2 (Hub-Spoke + AzFW): labs/lab-04/index.md
+  - Lab 05 - Hub-Spoke + AzFW - Resolve Private Endpoint via DNS Proxy: labs/lab-05/index.md
+  - Lab 06 - Hub-Spoke + AzFW - Resolve On-Prem DNS via DNS Proxy: labs/lab-06/index.md
+  - Lab 07 - Cleaning up resources: labs/lab-07/index.md
 
 theme:
   name: material
