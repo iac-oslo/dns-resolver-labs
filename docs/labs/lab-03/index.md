@@ -27,10 +27,10 @@ vm-workload ──dig app.onprem.local──► Resolver inbound (10.10.0.4)
 - Outbound endpoint resource ID noted:
 
 ```powershell
-az dns-resolver outbound-endpoint list \
-  --dns-resolver-name pdnsr-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s1 \
-  --query '[0].id' \
+az dns-resolver outbound-endpoint list `
+  --dns-resolver-name pdnsr-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s1 `
+  --query '[0].id' `
   -o tsv
 ```
 
@@ -114,9 +114,9 @@ az deployment group create `
 ## Task #3 - Verify the forwarding ruleset was created
 
 ```powershell
-az dns-resolver forwarding-ruleset list \
-  --resource-group rg-norwayeast-pdnsr-labs-s1 \
-  --query '[].{name:name, state:provisioningState}' \
+az dns-resolver forwarding-ruleset list `
+  --resource-group rg-norwayeast-pdnsr-labs-s1 `
+  --query '[].{name:name, state:provisioningState}' `
   -o table
 ```
 

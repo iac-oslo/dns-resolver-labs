@@ -24,9 +24,9 @@ vm-spoke1 ──dig app.onprem.local──► Resolver inbound (10.11.0.68)
 - Outbound endpoint resource ID:
 
 ```powershell
-az dns-resolver outbound-endpoint list \
-  --dns-resolver-name pdnsr-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s2 \
+az dns-resolver outbound-endpoint list `
+  --dns-resolver-name pdnsr-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s2 `
   --query '[0].id' -o tsv
 ```
 

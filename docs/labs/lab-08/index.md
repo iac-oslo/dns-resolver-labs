@@ -31,15 +31,15 @@ Point both spoke VNets to the Azure Firewall private IP (not the resolver direct
 
 ```powershell
 # Spoke 1
-az network vnet update \
-  --name vnet-spoke1-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
+az network vnet update `
+  --name vnet-spoke1-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --dns-servers 10.12.0.4
 
 # Spoke 2
-az network vnet update \
-  --name vnet-spoke2-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
+az network vnet update `
+  --name vnet-spoke2-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --dns-servers 10.12.0.4
 ```
 
@@ -90,10 +90,10 @@ Repeat from `vm-spoke2-norwayeast` — same result expected.
 Confirm the policy DNS proxy is enabled and points to the resolver:
 
 ```powershell
-az network firewall policy show \
-  --name nfp-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
-  --query 'dnsSettings' \
+az network firewall policy show `
+  --name nfp-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
+  --query 'dnsSettings' `
   -o json
 ```
 
@@ -102,18 +102,18 @@ az network firewall policy show \
 For comparison, temporarily point one spoke to the resolver directly (bypassing AzFW):
 
 ```powershell
-az network vnet update \
-  --name vnet-spoke1-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
+az network vnet update `
+  --name vnet-spoke1-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --dns-servers 10.12.0.196
 ```
 
 Restart `vm-spoke1-norwayeast` and re-test — resolution should still work. Then restore:
 
 ```powershell
-az network vnet update \
-  --name vnet-spoke1-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s3 \
+az network vnet update `
+  --name vnet-spoke1-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s3 `
   --dns-servers 10.12.0.4
 ```
 

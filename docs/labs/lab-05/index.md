@@ -27,15 +27,15 @@ Update DNS server settings on both spoke VNets:
 
 ```powershell
 # Spoke 1
-az network vnet update \
-  --name vnet-spoke1-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s2 \
+az network vnet update `
+  --name vnet-spoke1-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s2 `
   --dns-servers 10.11.0.68
 
 # Spoke 2
-az network vnet update \
-  --name vnet-spoke2-norwayeast \
-  --resource-group rg-norwayeast-pdnsr-labs-s2 \
+az network vnet update `
+  --name vnet-spoke2-norwayeast `
+  --resource-group rg-norwayeast-pdnsr-labs-s2 `
   --dns-servers 10.11.0.68
 ```
 
@@ -91,10 +91,10 @@ Expected: same private IP as from spoke1.
 ## Task #4 - Confirm Private DNS Zone is NOT linked to spoke VNets
 
 ```powershell
-az network private-dns link vnet list \
-  --resource-group rg-norwayeast-pdnsr-labs-s2 \
-  --zone-name privatelink.blob.core.windows.net \
-  --query '[].{name:name, vnet:virtualNetwork.id}' \
+az network private-dns link vnet list `
+  --resource-group rg-norwayeast-pdnsr-labs-s2 `
+  --zone-name privatelink.blob.core.windows.net `
+  --query '[].{name:name, vnet:virtualNetwork.id}' `
   -o table
 ```
 
