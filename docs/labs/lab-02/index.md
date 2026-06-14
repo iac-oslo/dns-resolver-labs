@@ -32,6 +32,12 @@ Connect to `vm-workload-norwayeast` via Azure Bastion:
 2. Click **Connect** → **Bastion**
 3. Login: `iac-admin` / `fooBar123!`
 
+Get your Storage Account name (run from your workstation):
+
+```powershell
+az storage account list -g rg-norwayeast-pdnsr-labs-s1 --query '[0].name' -o tsv
+```
+
 From the VM, resolve the Storage Account FQDN before changing anything:
 
 ```bash
@@ -96,12 +102,6 @@ Connect to `vm-workload-norwayeast` via Azure Bastion:
 1. Navigate to `vm-workload-norwayeast` in Azure Portal
 2. Click **Connect** → **Bastion**
 3. Login: `iac-admin` / `fooBar123!`
-
-Get your Storage Account name first (run from your workstation):
-
-```powershell
-az storage account list -g rg-norwayeast-pdnsr-labs-s1 --query '[0].name' -o tsv
-```
 
 From the VM, resolve the Storage Account FQDN:
 
