@@ -32,7 +32,12 @@ module modResolver 'br/public:avm/res/network/dns-resolver:0.5.0' = {
 var varInboundEndpointId = resourceId('Microsoft.Network/dnsResolvers/inboundEndpoints', varResolverName, 'inbound-ep')
 var varOutboundEndpointId = resourceId('Microsoft.Network/dnsResolvers/outboundEndpoints', varResolverName, 'outbound-ep')
 
+resource resInboundEndpoint 'Microsoft.Network/dnsResolvers/inboundEndpoints@2022-07-01' existing = {
+  name: '${varResolverName}/inbound-ep'
+  dependsOn: [modResolver]
+}
+
 output resolverResourceId string = modResolver.outputs.resourceId
 output inboundEndpointResourceId string = varInboundEndpointId
 output outboundEndpointResourceId string = varOutboundEndpointId
-output inboundEndpointIP string = reference(varInboundEndpointId, '2022-07-01').ipConfigurations[0].privateIpAddress
+output inboundEndpointIP string = resInboundEndpoint.properties.ipConfigurations[0].privateIpAddress
