@@ -17,10 +17,12 @@ module modSingleVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
       {
         name: 'subnet-inbound'
         addressPrefixes: [cidrSubnet(parAddressRange, 28, 0)]
+        delegation: 'Microsoft.Network/dnsResolvers'
       }
       {
         name: 'subnet-outbound'
         addressPrefixes: [cidrSubnet(parAddressRange, 28, 1)]
+        delegation: 'Microsoft.Network/dnsResolvers'
       }
       {
         name: 'AzureBastionSubnet'

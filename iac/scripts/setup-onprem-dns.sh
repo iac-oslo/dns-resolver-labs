@@ -41,5 +41,5 @@ app IN A ${MYIP}
 db  IN A 10.0.0.10
 EOF
 
-systemctl restart bind9
-systemctl enable bind9
+systemctl enable --now named
+systemctl restart named
