@@ -57,7 +57,7 @@ The VM currently uses Azure platform DNS (168.63.129.16) directly. Azure DNS eva
 
 Disconnect from Bastion. The next task routes DNS through the resolver.
 
-## Task #2 - Configure VNet DNS to use the Resolver inbound endpoint
+## Task #2 - Configure VNet DNS and restart the workload VM
 
 By default, VMs in a VNet use Azure's platform DNS (168.63.129.16) directly. That works fine for public names, but it bypasses the DNS Resolver entirely — private DNS zone lookups would go straight to Azure DNS without passing through the resolver inbound endpoint. Setting the VNet's DNS server to the resolver inbound IP forces all VM DNS queries through the resolver first, giving the resolver control over how names are resolved (including forwarding on-prem queries in lab-03).
 
@@ -83,11 +83,7 @@ az network vnet show `
   -o tsv
 ```
 
-## Task #3 - Restart the workload VM to pick up the new DNS settings
-
 VNet DNS settings are delivered to VMs via DHCP. When Azure updates the VNet's DNS server list, running VMs are not notified — they keep using the DNS server from their last DHCP lease until the lease is renewed. A reboot forces the VM to release and re-request its DHCP lease, at which point Azure pushes the updated DNS server address down to the NIC. Without the reboot, `dig` queries from the VM would still go directly to Azure platform DNS (168.63.129.16) and bypass the resolver.
-
-The VM NIC picks up VNet DNS settings on next boot or NIC refresh:
 
 ```powershell
 az vm restart `
@@ -95,7 +91,7 @@ az vm restart `
   --resource-group rg-norwayeast-pdnsr-labs-s1
 ```
 
-## Task #4 - Resolve the Storage Account Private Endpoint
+## Task #3 - Resolve the Storage Account Private Endpoint
 
 Connect to `vm-workload-norwayeast` via Azure Bastion:
 
@@ -122,7 +118,7 @@ Expected output — the FQDN should now resolve to a **private IP** in the `10.1
     
     The VM never queries Azure DNS directly; all queries go through the resolver first.
 
-## Task #5 - Check the DNS server used by the VM
+## Task #4 - Check the DNS server used by the VM
 
 From inside the VM, confirm which DNS server is in use:
 
@@ -132,7 +128,7 @@ resolvectl status | grep 'DNS Servers'
 
 Expected: `10.10.2.4`
 
-## Task #6 - Verify the Private DNS Zone is linked to the VNet
+## Task #5 - Verify the Private DNS Zone is linked to the VNet
 
 ```powershell
 az network private-dns link vnet list `
