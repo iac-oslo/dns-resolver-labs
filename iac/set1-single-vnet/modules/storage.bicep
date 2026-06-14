@@ -1,7 +1,7 @@
 targetScope = 'resourceGroup'
 
 param parLocation string
-param parVnetId string
+param parResolverVnetId string
 param parPeSubnetId string
 
 module modPrivateDnsZone 'br/public:avm/res/network/private-dns-zone:0.7.0' = {
@@ -11,8 +11,8 @@ module modPrivateDnsZone 'br/public:avm/res/network/private-dns-zone:0.7.0' = {
     location: 'global'
     virtualNetworkLinks: [
       {
-        name: 'link-single-vnet'
-        virtualNetworkResourceId: parVnetId
+        name: 'link-resolver-vnet'
+        virtualNetworkResourceId: parResolverVnetId
         registrationEnabled: false
       }
     ]

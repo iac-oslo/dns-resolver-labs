@@ -1,6 +1,6 @@
 # lab-01 - Provision Set 1: Single VNet
 
-This lab provisions the infrastructure for labs 02 and 03. It deploys a single VNet with Azure Private DNS Resolver, a workload VM, an on-premises simulation VM with BIND9, a Storage Account with a Private Endpoint, and Azure Bastion for connectivity.
+This lab provisions the infrastructure for labs 02 and 03. It deploys three peered VNets: a dedicated resolver VNet hosting the Azure Private DNS Resolver, a workload VNet with a workload VM and Storage Account Private Endpoint, and an on-premises simulation VNet with BIND9. Azure Bastion provides connectivity.
 
 !!! info "Estimated deployment time"
     ~8–10 minutes
@@ -38,8 +38,9 @@ The following resources will be deployed under `rg-norwayeast-pdnsr-labs-s1`:
 
 | Resource | Type |
 |----------|------|
-| `vnet-single-norwayeast` | Virtual Network (10.10.0.0/24) |
-| `vnet-onprem-norwayeast` | Virtual Network (10.10.1.0/24) |
+| `vnet-resolver-norwayeast` | Virtual Network (10.10.2.0/26) — DNS Resolver VNet |
+| `vnet-workload-norwayeast` | Virtual Network (10.10.0.0/24) — workload VNet |
+| `vnet-onprem-norwayeast` | Virtual Network (10.10.1.0/24) — on-prem simulation VNet |
 | `pdnsr-norwayeast` | Private DNS Resolver |
 | `vm-workload-norwayeast` | Linux VM (B1s, Ubuntu 22.04) |
 | `vm-onprem-norwayeast` | Linux VM (B1s, Ubuntu 22.04) with BIND9 |
@@ -52,14 +53,17 @@ The following resources will be deployed under `rg-norwayeast-pdnsr-labs-s1`:
 ### Network topology
 
 ```
-10.10.0.0/24 (vnet-single-norwayeast)
-├── subnet-inbound      10.10.0.0/28    ← DNS Resolver inbound endpoint
-├── subnet-outbound     10.10.0.16/28   ← DNS Resolver outbound endpoint
+10.10.2.0/26 (vnet-resolver-norwayeast)
+├── subnet-inbound   10.10.2.0/28    ← DNS Resolver inbound endpoint (10.10.2.4)
+└── subnet-outbound  10.10.2.16/28   ← DNS Resolver outbound endpoint
+     └── [privatelink.blob.core.windows.net linked here]
+
+10.10.0.0/24 (vnet-workload-norwayeast, peered to resolver)
 ├── AzureBastionSubnet  10.10.0.64/26   ← Azure Bastion
 ├── subnet-workload     10.10.0.128/26  ← vm-workload-norwayeast
 └── subnet-pe           10.10.0.192/26  ← Private Endpoint (Storage)
 
-10.10.1.0/24 (vnet-onprem-norwayeast, peered)
+10.10.1.0/24 (vnet-onprem-norwayeast, peered to resolver and workload)
 └── subnet-onprem       10.10.1.0/24    ← vm-onprem-norwayeast
 ```
 
@@ -84,7 +88,7 @@ az dns-resolver inbound-endpoint list `
   -o tsv
 ```
 
-Expected result: `10.10.0.4` (first available IP in the inbound subnet)
+Expected result: `10.10.2.4` (first available IP in the inbound subnet)
 
 Get VM private IP addresses:
 

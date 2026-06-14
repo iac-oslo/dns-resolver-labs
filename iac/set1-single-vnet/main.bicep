@@ -2,7 +2,7 @@ targetScope = 'subscription'
 
 param parLocation string
 
-import { getResourcePrefix, singleVnetAddressRange, onpremVnetAddressRange, adminUsername, adminPassword } from 'variables.bicep'
+import { getResourcePrefix, singleVnetAddressRange, resolverVnetAddressRange, onpremVnetAddressRange, adminUsername, adminPassword } from 'variables.bicep'
 
 var varResourcePrefix = getResourcePrefix(parLocation)
 var varResourceGroupName = 'rg-${varResourcePrefix}-s1'
@@ -22,6 +22,7 @@ module vnet 'modules/vnet.bicep' = {
   params: {
     parLocation: parLocation
     parAddressRange: singleVnetAddressRange
+    parResolverAddressRange: resolverVnetAddressRange
     parOnpremAddressRange: onpremVnetAddressRange
   }
 }
@@ -32,7 +33,7 @@ module resolver 'modules/resolver.bicep' = {
   dependsOn: [rg]
   params: {
     parLocation: parLocation
-    parVnetId: vnet.outputs.singleVnetId
+    parVnetId: vnet.outputs.resolverVnetId
     parInboundSubnetId: vnet.outputs.inboundSubnetId
     parOutboundSubnetId: vnet.outputs.outboundSubnetId
   }
@@ -44,7 +45,7 @@ module storage 'modules/storage.bicep' = {
   dependsOn: [rg]
   params: {
     parLocation: parLocation
-    parVnetId: vnet.outputs.singleVnetId
+    parResolverVnetId: vnet.outputs.resolverVnetId
     parPeSubnetId: vnet.outputs.peSubnetId
   }
 }
@@ -116,6 +117,6 @@ module bastion 'modules/bastion.bicep' = {
   dependsOn: [rg]
   params: {
     parLocation: parLocation
-    parVnetId: vnet.outputs.singleVnetId
+    parVnetId: vnet.outputs.workloadVnetId
   }
 }
