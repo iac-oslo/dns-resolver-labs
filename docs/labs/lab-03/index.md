@@ -5,7 +5,7 @@ In this lab you create a DNS Forwarding Ruleset using Bicep (IaC task). The rule
 **Scenario:** A workload VM needs to resolve internal hostnames from an on-premises DNS zone (`onprem.local`). The DNS Resolver outbound endpoint forwards matching queries to the on-prem DNS server.
 
 ```
-vm-workload ──dig app.onprem.local──► Resolver inbound (10.10.0.4)
+vm-workload ──dig app.onprem.local──► Resolver inbound (10.10.2.4)
                                                │
                               Forwarding Ruleset: onprem.local → vm-onprem IP
                                                │
@@ -22,7 +22,7 @@ vm-workload ──dig app.onprem.local──► Resolver inbound (10.10.0.4)
 ## Prerequisites
 
 - Lab-02 completed
-- VNet DNS server already set to `10.10.0.4` (DNS Resolver inbound)
+- VNet DNS server already set to `10.10.2.4` (DNS Resolver inbound)
 - On-prem VM IP noted (expected: `10.10.1.4`)
 - Outbound endpoint resource ID noted:
 
@@ -86,7 +86,7 @@ $outboundEpId = az dns-resolver outbound-endpoint list `
   --query '[0].id' -o tsv
 
 $vnetId = az network vnet show `
-  --name vnet-single-norwayeast `
+  --name vnet-workload-norwayeast `
   --resource-group rg-norwayeast-pdnsr-labs-s1 `
   --query id -o tsv
 
