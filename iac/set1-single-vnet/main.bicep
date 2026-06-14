@@ -1,11 +1,12 @@
 targetScope = 'subscription'
 
 param parLocation string
+param parRgIndex string = '1'
 
 import { getResourcePrefix, singleVnetAddressRange, onpremVnetAddressRange, adminUsername, adminPassword } from 'variables.bicep'
 
 var varResourcePrefix = getResourcePrefix(parLocation)
-var varResourceGroupName = 'rg-${varResourcePrefix}-s1'
+var varResourceGroupName = 'rg-${varResourcePrefix}-s1-${parRgIndex}'
 
 module rg 'br/public:avm/res/resources/resource-group:0.4.1' = {
   name: 'deploy-${varResourceGroupName}'
@@ -86,7 +87,7 @@ module modWorkloadVM 'br/public:avm/res/compute/virtual-machine:0.20.0' = {
     extensionCustomScriptConfig: {
       settings: {
         fileUris: [
-          'https://raw.githubusercontent.com/iac-oslo/dns-resolver-labs/refs/heads/main/iac/scripts/setup-workload.sh'
+          'https://raw.githubusercontent.com/iac-oslo/dns-resolver-labs/main/iac/scripts/setup-workload.sh'
         ]
         commandToExecute: 'bash setup-workload.sh'
       }

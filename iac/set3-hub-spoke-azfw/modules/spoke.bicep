@@ -74,7 +74,7 @@ module modSpokeVM 'br/public:avm/res/compute/virtual-machine:0.20.0' = {
     extensionCustomScriptConfig: {
       settings: {
         fileUris: [
-          'https://raw.githubusercontent.com/iac-oslo/dns-resolver-labs/refs/heads/main/iac/scripts/setup-workload.sh'
+          'https://raw.githubusercontent.com/iac-oslo/dns-resolver-labs/main/iac/scripts/setup-workload.sh'
         ]
         commandToExecute: 'bash setup-workload.sh'
       }
