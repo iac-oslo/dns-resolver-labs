@@ -24,9 +24,7 @@ vm-workload ──DNS query──► Resolver inbound (10.10.2.4)
 - Resolver inbound endpoint IP noted (expected: `10.10.2.4`)
 - Storage Account FQDN noted (e.g., `sa<unique>.blob.core.windows.net`)
 
-## Task #1 - Configure VNet DNS to use the Resolver inbound endpoint
-
-### Before: verify DNS resolves to a public IP
+## Task #1 - Verify DNS resolves to a public IP (before state)
 
 Connect to `vm-workload-norwayeast` via Azure Bastion:
 
@@ -51,9 +49,9 @@ blob.xyz.store.core.windows.net. 60 IN A 20.60.x.x
 
 The VM currently uses Azure platform DNS (168.63.129.16) directly. Azure DNS evaluates Private DNS Zones in the context of `vnet-workload-norwayeast` — but the Private DNS Zone `privatelink.blob.core.windows.net` is linked to `vnet-resolver-norwayeast`, not the workload VNet. So Azure DNS falls through to public DNS and returns the storage account's public IP.
 
-Disconnect from Bastion. Now change the VNet DNS so queries route through the resolver.
+Disconnect from Bastion. The next task routes DNS through the resolver.
 
-### Change VNet DNS
+## Task #2 - Configure VNet DNS to use the Resolver inbound endpoint
 
 By default, VMs in a VNet use Azure's platform DNS (168.63.129.16) directly. That works fine for public names, but it bypasses the DNS Resolver entirely — private DNS zone lookups would go straight to Azure DNS without passing through the resolver inbound endpoint. Setting the VNet's DNS server to the resolver inbound IP forces all VM DNS queries through the resolver first, giving the resolver control over how names are resolved (including forwarding on-prem queries in lab-03).
 
@@ -79,7 +77,7 @@ az network vnet show `
   -o tsv
 ```
 
-## Task #2 - Restart the workload VM to pick up the new DNS settings
+## Task #3 - Restart the workload VM to pick up the new DNS settings
 
 VNet DNS settings are delivered to VMs via DHCP. When Azure updates the VNet's DNS server list, running VMs are not notified — they keep using the DNS server from their last DHCP lease until the lease is renewed. A reboot forces the VM to release and re-request its DHCP lease, at which point Azure pushes the updated DNS server address down to the NIC. Without the reboot, `dig` queries from the VM would still go directly to Azure platform DNS (168.63.129.16) and bypass the resolver.
 
@@ -91,7 +89,7 @@ az vm restart `
   --resource-group rg-norwayeast-pdnsr-labs-s1
 ```
 
-## Task #3 - Resolve the Storage Account Private Endpoint
+## Task #4 - Resolve the Storage Account Private Endpoint
 
 Connect to `vm-workload-norwayeast` via Azure Bastion:
 
@@ -111,7 +109,7 @@ From the VM, resolve the Storage Account FQDN:
 dig <storage-account-name>.blob.core.windows.net
 ```
 
-Expected output — the FQDN should resolve to a **private IP** in the `10.10.0.192/26` range (subnet-pe):
+Expected output — the FQDN should now resolve to a **private IP** in the `10.10.0.192/26` range (subnet-pe):
 
 ```
 ;; ANSWER SECTION:
@@ -124,7 +122,7 @@ Expected output — the FQDN should resolve to a **private IP** in the `10.10.0.
     
     The VM never queries Azure DNS directly; all queries go through the resolver first.
 
-## Task #4 - Check the DNS server used by the VM
+## Task #5 - Check the DNS server used by the VM
 
 From inside the VM, confirm which DNS server is in use:
 
@@ -134,7 +132,7 @@ resolvectl status | grep 'DNS Servers'
 
 Expected: `10.10.2.4`
 
-## Task #5 - Verify the Private DNS Zone is linked to the VNet
+## Task #6 - Verify the Private DNS Zone is linked to the VNet
 
 ```powershell
 az network private-dns link vnet list `
