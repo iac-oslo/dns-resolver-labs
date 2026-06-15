@@ -12,6 +12,9 @@ nav:
   - Lab 05 - Hub-Spoke + AzFW - Resolve Private Endpoint via DNS Proxy: labs/lab-05/index.md
   - Lab 06 - Hub-Spoke + AzFW - Resolve On-Prem DNS via DNS Proxy: labs/lab-06/index.md
   - Lab 07 - Cleaning up resources: labs/lab-07/index.md
+  - Lab 08 - Provision Set 3 (Secured VWAN + AzFW): labs/lab-08/index.md
+  - Lab 09 - Secured VWAN + AzFW - Resolve Private Endpoint via DNS Proxy: labs/lab-09/index.md
+  - Lab 10 - Secured VWAN + AzFW - Resolve On-Prem DNS via DNS Proxy: labs/lab-10/index.md
 
 theme:
   name: material

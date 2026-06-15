@@ -3,7 +3,7 @@
 This is the most important part of the workshop. Delete all lab resources to avoid unexpected charges.
 
 !!! warning "Azure Firewall and Bastion cost money even when idle"
-    Azure Firewall Basic costs ~$0.33/hr and Bastion Basic costs ~$0.19/hr. A forgotten deployment left running for 12 hours can cost ~$11.74 for Set 2 alone.
+    Azure Firewall Basic costs ~$0.33/hr and Bastion Basic costs ~$0.19/hr. A forgotten Set 2 or Set 3 deployment left running for 12 hours can cost ~$10–12.
 
 ## Task #1 - Delete all lab resource groups
 
@@ -11,6 +11,7 @@ Run the following commands to delete all resource groups. The `--no-wait` flag r
 
 ```powershell
 az group delete --name rg-norwayeast-pdnsr-labs-s1 --yes --no-wait
+az group delete --name rg-norwayeast-pdnsr-labs-s2 --yes --no-wait
 az group delete --name rg-norwayeast-pdnsr-labs-s3 --yes --no-wait
 ```
 
